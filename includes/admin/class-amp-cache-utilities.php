@@ -162,9 +162,8 @@ abstract class AMP_Cache_Utilities {
 		if ( ! $update_ping_url ) {
 			return false;
 		}
-		$headers = get_headers( $update_ping_url );
-    	$http_response_code = substr($headers[0], 9, 3);
-    	return ( 204 != $http_response_code );
+		$response = wp_remote_get( $update_ping_url );
+		return ( 204 == wp_remote_retrieve_response_code( $response ) );
 	}
 }
 ?>
