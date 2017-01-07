@@ -2,6 +2,8 @@
 abstract class AMP_Cache_Utilities {
 
 	static $amp_valid_content_types = array( 'c', 'i', 'r' );
+	static $amp_cache_url_base = 'https://cdn.ampproject.org';
+	static $amp_cache_update_url_base = 'https://cdn.ampproject.org/update-ping';
 
 	public static function amp_add_cache_update_actions() {
 		// Hooking this to the post_updated action so this will fire any time a post
@@ -13,29 +15,34 @@ abstract class AMP_Cache_Utilities {
 		add_action( 'before_delete_post',  array( 'AMP_Cache_Utilities', 'do_amp_update_ping' ) );
 	}
 
-	// TODO: Implement these for use with urls that don't correspond to a post (ex. favicon, font, etc)
-	// public static function get_amp_cache_url_for_resource( $url, $content_type, $scheme = null ) {
+	public static function get_amp_cache_url_for_resource( $url, $content_type, $scheme = null ) {
+		$amp_cache_resource_path = self::get_amp_cache_path_for_url( $url );
+		if ( $amp_cache_resource_path ) {
+			return self::$amp_cache_url_base . '/' . ltrim( $amp_cache_resource_path, '/' );
+		}
+		return false;
+	}
 
-	// }
-
-	// public static function get_amp_cache_update_url_for_resource( $url, $content_type, $scheme = null ) {
-
-	// }
+	public static function get_amp_cache_update_url_for_resource( $url, $content_type, $scheme = null ) {
+		$amp_cache_resource_path = self::get_amp_cache_path_for_url( $url );
+		if ( $amp_cache_resource_path ) {
+			return self::$amp_cache_update_url_base . '/' . ltrim( $amp_cache_resource_path, '/' );
+		}
+		return false;
+	}
 
 	public static function get_amp_cache_url_for_post( $post_id ) {
-		$amp_cache_url_base = 'https://cdn.ampproject.org';
 		$amp_cache_resource_path = self::get_amp_cache_path_for_post( $post_id );
 		if ( $amp_cache_resource_path ) {
-			return $amp_cache_url_base . '/' . ltrim( $amp_cache_resource_path, '/' );
+			return self::$amp_cache_url_base . '/' . ltrim( $amp_cache_resource_path, '/' );
 		}
 		return false;
 	}
 
 	public static function get_amp_cache_update_url_for_post( $post_id ) {
-		$amp_cache_url_base = 'https://cdn.ampproject.org/update-ping';
 		$amp_cache_resource_path = self::get_amp_cache_path_for_post( $post_id );
 		if ( $amp_cache_resource_path ) {
-			return $amp_cache_url_base . '/' . ltrim( $amp_cache_resource_path, '/' );
+			return self::$amp_cache_update_url_base . '/' . ltrim( $amp_cache_resource_path, '/' );
 		}
 		return false;
 	}
